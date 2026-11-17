@@ -1,0 +1,10 @@
+---
+Resources:
+  SimpleEC2Instance:
+    Type: "AWS::EC2::Instance"
+    Properties:
+      InstanceType: t3.micro
+      ImageId: ami-0cede6fe40e6ac719  
+      Tags:
+        - Key: Name
+          Value: apponix-cloudformation

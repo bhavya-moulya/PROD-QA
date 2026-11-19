@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0B1120">
+  <title>PeopleDesk | Employee Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <style>
+    :root{--bg:#0B1120;--muted:#94A3B8;--soft:#CBD5E1;--blue:#3B82F6;--cyan:#06B6D4;--line:rgba(148,163,184,.16);--glass:rgba(18,27,52,.62);--green:#34d399;--red:#fb7185;--ease:cubic-bezier(.22,1,.36,1);--grad:linear-gradient(120deg,#3B82F6,#06B6D4)}
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth;scroll-padding-top:84px;color-scheme:dark}
+    body{margin:0;background:var(--bg);color:#fff;font-family:Inter,"Segoe UI",system-ui,Arial,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
+    @keyframes riseIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+    @keyframes fadeDown{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:none}}
+    @keyframes wipe{from{clip-path:inset(-10% 100% -10% 0);opacity:.3;transform:translateY(8px)}to{clip-path:inset(-10% -2% -10% 0);opacity:1;transform:none}}
+    @keyframes rowReveal{from{opacity:0;transform:translateX(8px)}to{opacity:1;transform:none}}
+    @keyframes statusPulse{50%{box-shadow:0 0 0 8px rgba(52,211,153,0)}}
+    @keyframes skeleton{to{background-position-x:-200%}}
+    @keyframes bgShift{to{background-position:100% 100%}}
+    @keyframes orbOne{50%{transform:translate3d(60px,40px,0) scale(1.1)}}
+    @keyframes orbTwo{50%{transform:translate3d(-50px,-36px,0) scale(.92)}}
+    @keyframes load{to{transform:none}}
+    @keyframes loaderOut{to{opacity:0;visibility:hidden}}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes messageIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+    @keyframes sparkFly{to{transform:translate(var(--dx),var(--dy)) rotate(var(--rot));opacity:0}}
+
+    /* page loader */
+    .loader{position:fixed;inset:0;z-index:100;display:grid;place-content:center;justify-items:center;gap:18px;background:var(--bg);animation:loaderOut .6s ease 1s forwards}
+    .loader .brand-mark{animation:none}
+    .loader i{display:block;width:140px;height:3px;border-radius:3px;background:rgba(148,163,184,.18);overflow:hidden;position:relative}
+    .loader i::after{content:"";position:absolute;inset:0;background:var(--grad);transform:translateX(-100%);animation:load 1s var(--ease) forwards}
+
+    /* animated gradient background + floating orbs */
+    .ambient{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:-1;background:radial-gradient(60% 50% at 12% 8%,rgba(59,130,246,.18),transparent 70%),radial-gradient(50% 45% at 90% 75%,rgba(6,182,212,.13),transparent 70%),var(--bg);background-size:130% 130%;animation:bgShift 20s ease-in-out infinite alternate}
+    .ambient-orb{position:absolute;border-radius:50%;filter:blur(40px);will-change:transform}
+    .ambient-orb.one{width:340px;height:340px;top:14%;left:-120px;background:rgba(59,130,246,.18);animation:orbOne 18s ease-in-out infinite}
+    .ambient-orb.two{width:420px;height:420px;right:-160px;bottom:4%;background:rgba(6,182,212,.14);animation:orbTwo 22s ease-in-out infinite}
+
+    /* navigation */
+    .topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:14px max(22px,calc((100% - 1120px)/2));background:rgba(11,17,32,.55);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid transparent;transition:background .3s,border-color .3s,box-shadow .3s;animation:fadeDown .7s var(--ease) .8s both}
+    .topbar.scrolled{background:rgba(11,17,32,.88);border-color:var(--line);box-shadow:0 10px 30px rgba(0,0,0,.3)}
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand-mark{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:var(--grad);color:#fff;font-weight:800;letter-spacing:-1px;box-shadow:0 8px 24px rgba(59,130,246,.4)}
+    .brand h1{margin:0;font-size:18px;letter-spacing:-.2px}
+    .brand p{margin:2px 0 0;color:var(--muted);font-size:11px;letter-spacing:.6px}
+    .navlinks{display:flex;gap:4px;padding:4px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.03)}
+    .navlinks a{padding:7px 14px;border-radius:999px;font-size:13px;font-weight:500;color:var(--muted);text-decoration:none;transition:color .2s,background .25s,box-shadow .25s}
+    .navlinks a:hover{color:#fff}
+    .navlinks a.on{color:#fff;background:rgba(59,130,246,.2);box-shadow:inset 0 0 0 1px rgba(59,130,246,.45)}
+    .profile{display:flex;align-items:center;gap:10px;color:var(--soft);font-size:13px}
+    .avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgba(59,130,246,.18);box-shadow:inset 0 0 0 1px rgba(59,130,246,.5);font-weight:700;font-size:12px}
+
+    /* hero */
+    main{max-width:1120px;margin:34px auto;padding:0 22px}
+    .welcome{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:24px;padding:22px 0 8px;animation:riseIn .7s var(--ease) .9s both}
+    .hero-tag{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:999px;font-size:11px;font-weight:700;letter-spacing:1.2px;color:#7dd3fc;margin-bottom:14px}
+    .hero-tag i{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(52,211,153,.18);animation:statusPulse 2.4s infinite}
+    .eyebrow{color:var(--cyan);text-transform:uppercase;font-size:11px;font-weight:700;letter-spacing:1.5px}
+    .welcome h2{margin:8px 0 8px;font-size:clamp(34px,5vw,54px);line-height:1.1;letter-spacing:-2px;background:linear-gradient(100deg,#fff 35%,#93c5fd 70%,#67e8f9);-webkit-background-clip:text;background-clip:text;color:transparent;animation:wipe 1s var(--ease) 1.05s both}
+    .welcome p{margin:0;color:var(--muted);font-size:15px;max-width:520px}
+    .date-note{color:var(--muted);font-size:12px;white-space:nowrap;letter-spacing:.8px}
+
+    /* stats */
+    .stats-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:0 0 24px}
+    .stat{background:var(--glass);border:1px solid var(--line);border-radius:16px;padding:18px 20px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 12px 32px rgba(0,0,0,.22);transition:transform .3s var(--ease),border-color .3s,box-shadow .3s;animation:riseIn .6s var(--ease) both}
+    .stat:nth-child(1){animation-delay:1s}.stat:nth-child(2){animation-delay:1.08s}.stat:nth-child(3){animation-delay:1.16s}
+    .stat:hover{transform:translateY(-3px);border-color:rgba(6,182,212,.45);box-shadow:0 16px 40px rgba(0,0,0,.3),0 0 28px rgba(6,182,212,.12)}
+    .stat small{display:block;color:var(--muted);font-size:12px;font-weight:500;margin-bottom:8px}
+    .stat strong{font-size:26px;letter-spacing:-.7px;font-variant-numeric:tabular-nums}
+    .stat em{font-size:12px;font-style:normal;color:var(--muted);margin-left:6px}
+    .stat-icon{float:right;font-size:18px;background:rgba(59,130,246,.14);border:1px solid rgba(59,130,246,.3);border-radius:12px;padding:7px}
+
+    /* panels with glowing borders */
+    .layout{display:grid;grid-template-columns:minmax(290px,.78fr) minmax(0,1.5fr);gap:20px;align-items:start}
+    .panel{position:relative;overflow:hidden;padding:24px;border-radius:20px;background:var(--glass);border:1px solid var(--line);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 20px 50px rgba(0,0,0,.28);transition:transform .35s var(--ease),border-color .35s,box-shadow .35s;animation:riseIn .7s var(--ease) both}
+    .panel::before{content:"";position:absolute;inset:0 0 auto;height:2px;background:var(--grad);opacity:.75}
+    .panel:first-child{animation-delay:1.1s}.panel:last-child{animation-delay:1.22s}
+    .panel:hover{transform:translateY(-3px);border-color:rgba(59,130,246,.5);box-shadow:0 24px 60px rgba(0,0,0,.35),0 0 44px rgba(59,130,246,.15)}
+    .panel-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:20px}
+    .panel h3{margin:0;font-size:17px;letter-spacing:-.2px}
+    .sub{color:var(--muted);font-size:13px;margin:5px 0 0}
+
+    /* form */
+    .field{margin-bottom:15px}
+    label{display:block;font-size:12px;font-weight:600;margin-bottom:7px;color:var(--soft);transition:color .2s}
+    .field:focus-within label{color:#67e8f9}
+    input{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:#fff;font:inherit;font-size:14px;transition:border-color .2s,box-shadow .25s,background .25s}
+    input::placeholder{color:#64748b}
+    input:focus{outline:0;border-color:var(--cyan);background:rgba(6,182,212,.06);box-shadow:0 0 0 4px rgba(6,182,212,.14)}
+    #employeeForm input:not(:placeholder-shown):invalid{border-color:rgba(251,113,133,.6)}
+    #employeeForm input:not(:placeholder-shown):valid{border-color:rgba(52,211,153,.5)}
+    .actions{display:flex;gap:9px;margin-top:19px}
+    #message{min-height:18px;margin:14px 0 0;font-size:13px;font-weight:500}
+    #message:not(:empty){animation:messageIn .35s var(--ease) both}
+    .success{color:var(--green)}.error{color:var(--red)}
+
+    /* buttons */
+    button{position:relative;overflow:hidden;border:0;border-radius:10px;padding:11px 18px;font:600 13px Inter,"Segoe UI",system-ui,sans-serif;color:#fff;cursor:pointer;background:var(--grad);background-size:160% 100%;box-shadow:0 6px 18px rgba(59,130,246,.28);transition:background-position .45s var(--ease),transform .25s var(--ease),box-shadow .25s,color .2s}
+    button:hover:not(:disabled){background-position:100% 0;transform:translateY(-2px);box-shadow:0 10px 28px rgba(6,182,212,.35)}
+    button:active:not(:disabled){transform:scale(.97)}
+    button:disabled{opacity:.6;cursor:wait}
+    button:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+    button.light{background:rgba(255,255,255,.06);color:var(--soft);box-shadow:inset 0 0 0 1px var(--line)}
+    button.light:hover:not(:disabled){background:rgba(59,130,246,.14);color:#fff;box-shadow:inset 0 0 0 1px rgba(59,130,246,.5)}
+    button[aria-busy="true"]::before{content:"";display:inline-block;width:12px;height:12px;margin:0 8px -2px 0;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+
+    /* directory table */
+    .toolbar{display:flex;gap:9px;align-items:center}.toolbar input{max-width:205px}
+    .table-wrap{overflow-x:auto}
+    table{width:100%;border-collapse:collapse;min-width:560px}
+    th{text-align:left;padding:12px 12px;background:rgba(255,255,255,.04);color:var(--muted);text-transform:uppercase;letter-spacing:.8px;font-size:11px;font-weight:700}
+    td{padding:14px 12px;border-bottom:1px solid var(--line);font-size:13px;color:var(--soft)}
+    tbody tr:last-child td{border-bottom:0}
+    tbody tr{transition:background-color .2s;animation:rowReveal .3s ease both}
+    tbody tr:hover{background:rgba(59,130,246,.08)}
+    tbody tr td:first-child{box-shadow:inset 0 0 0 var(--cyan);transition:box-shadow .25s var(--ease)}
+    tbody tr:hover td:first-child:not(.empty){box-shadow:inset 3px 0 0 var(--cyan)}
+    .empty{text-align:center;color:var(--muted);padding:30px 12px}
+    .count{display:inline-flex;align-items:center;justify-content:center;min-width:25px;height:25px;padding:0 7px;border-radius:20px;background:rgba(59,130,246,.18);color:#93c5fd;font-size:11px;font-weight:700}
+    .loading-shimmer{height:12px;border-radius:20px;background:linear-gradient(90deg,rgba(255,255,255,.05) 25%,rgba(255,255,255,.14) 45%,rgba(255,255,255,.05) 65%);background-size:200% 100%;animation:skeleton 1.2s linear infinite;width:80%}
+
+    /* feedback */
+    #toast{position:fixed;right:24px;bottom:24px;z-index:10;padding:15px 20px;border-radius:14px;background:#111a33;border:1px solid var(--line);color:#fff;font-size:14px;box-shadow:0 16px 45px rgba(0,0,0,.45);max-width:min(380px,calc(100vw - 48px));transform:translateY(100px);opacity:0;transition:transform .4s var(--ease),opacity .3s;pointer-events:none}
+    #toast.visible{transform:none;opacity:1}
+    #toast.success{border-left:4px solid var(--green)}#toast.error{border-left:4px solid var(--red)}
+    .spark{position:fixed;z-index:15;width:7px;height:11px;pointer-events:none;animation:sparkFly 1.1s ease-out forwards}
+    #progress{position:fixed;top:0;left:0;height:3px;width:0;z-index:30;background:var(--grad);box-shadow:0 0 12px var(--blue);transition:width .35s,opacity .3s}
+    footer{max-width:1120px;margin:0 auto;padding:12px 22px 30px;display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:12px;animation:riseIn .8s var(--ease) 1.3s both}
+    footer strong{color:var(--soft)}
+
+    /* responsive */
+    @media(max-width:800px){.layout{grid-template-columns:1fr}.navlinks{display:none}}
+    @media(max-width:600px){.stats-strip{grid-template-columns:1fr 1fr}.stat:last-child{grid-column:1/-1}.stat{padding:14px 16px}}
+    @media(max-width:560px){
+      .topbar{padding:12px 18px}.profile span:last-child{display:none}
+      main{margin:20px auto;padding:0 15px}.welcome{align-items:flex-start;flex-direction:column}
+      .panel{padding:18px}.panel-head{align-items:flex-start;flex-direction:column}
+      .toolbar{width:100%}.toolbar input{max-width:none;flex:1}
+      footer{padding:8px 15px 24px;flex-direction:column}
+    }
+    @media(prefers-reduced-motion:reduce){
+      *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-delay:0s!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+      .ambient-orb{display:none}.loader{animation-duration:.01ms!important}
+    }
+  </style>
+</head>
+<body>
+  <div class="loader" aria-hidden="true"><div class="brand-mark">PD</div><i></i></div>
+  <div id="progress" aria-hidden="true"></div>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <div class="ambient" aria-hidden="true"><span class="ambient-orb one"></span><span class="ambient-orb two"></span></div>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">PD</div>
+      <div><h1>PeopleDesk</h1><p>TEAM MANAGEMENT PORTAL</p></div>
+    </div>
+    <nav class="navlinks" aria-label="Sections"><a href="#overview">Overview</a><a href="#add">Add employee</a><a href="#directory">Directory</a></nav>
+    <div class="profile"><div class="avatar">KG</div><span>Kartik GM</span></div>
+  </header>
+
+  <main>
+    <section class="welcome">
+      <div>
+        <div class="hero-tag"><i></i> PEOPLE OPERATIONS · PRO</div>
+        <div class="eyebrow">Workspace / People</div>
+        <h2>Employee hub</h2>
+        <p>Add team members and keep your employee directory up to date.</p>
+      </div>
+      <div class="date-note">ADMIN WORKSPACE</div>
+    </section>
+
+    <div class="stats-strip" id="overview" aria-label="Dashboard overview">
+      <div class="stat"><span class="stat-icon">👥</span><small>Employees loaded</small><strong id="totalCount">—</strong><em>records</em></div>
+      <div class="stat"><span class="stat-icon">🔎</span><small>Visible results</small><strong id="visibleCount">—</strong><em>matches</em></div>
+      <div class="stat"><span class="stat-icon">⚡</span><small>Workspace</small><strong style="font-size:20px">PeopleDesk</strong><em>Pro</em></div>
+    </div>
+    <div class="layout">
+      <section class="panel" id="add">
+        <div class="panel-head">
+          <div><h3>Add an employee</h3><p class="sub">Enter the employee details below.</p></div>
+        </div>
+        <form id="employeeForm">
+          <div class="field">
+            <label for="name">Full name</label>
+            <input id="name" name="name" placeholder="e.g. Rahul Sharma" autocomplete="name" required>
+          </div>
+          <div class="field">
+            <label for="email">Work email</label>
+            <input id="email" name="email" type="email" placeholder="name@company.com" autocomplete="email" required>
+          </div>
+          <div class="field">
+            <label for="mobile">Mobile number</label>
+            <input id="mobile" name="mobile" type="tel" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" placeholder="10-digit number" required>
+          </div>
+          <div class="field">
+            <label for="department">Department</label>
+            <input id="department" name="department" placeholder="e.g. Cloud Operations" required>
+          </div>
+          <div class="actions">
+            <button id="submitButton" type="submit">Save employee</button>
+            <button class="light" type="reset">Reset</button>
+          </div>
+        </form>
+        <p id="message" role="status" aria-live="polite"></p>
+      </section>
+
+      <section class="panel" id="directory">
+        <div class="panel-head">
+          <div><h3>Employee directory</h3><p class="sub">Team records connected to your API.</p></div>
+          <div class="toolbar">
+            <input id="searchInput" type="search" placeholder="Search employees..." aria-label="Search employees">
+            <button class="light" id="loadButton" type="button">Refresh</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Employee ID</th><th>Name</th><th>Email</th><th>Mobile</th><th>Department</th></tr></thead>
+            <tbody id="employeeRows"><tr><td class="empty" colspan="5">Select Refresh to load employee records.</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <span>© 2026 PeopleDesk · Employee Management Portal</span>
+    <span>Designed and developed by <strong>Kartik GM</strong></span>
+  </footer>
+
+  <script>
+    // Keep this URL aligned with your API Gateway invoke URL.
+    const API_URL = "https://basxj0mpo9.execute-api.ap-south-1.amazonaws.com";
+
+    const form = document.getElementById("employeeForm");
+    const message = document.getElementById("message");
+    const submitButton = document.getElementById("submitButton");
+    const rows = document.getElementById("employeeRows");
+    const searchInput = document.getElementById("searchInput");
+    let employees = [];
+
+    function showMessage(text, type) {
+      message.className = type || "";
+      message.textContent = text;
+    }
+
+    // Smooth number transitions (respects reduced motion)
+    function animateCount(el, to, duration = 700) {
+      const from = parseInt(el.textContent, 10), start = Number.isNaN(from) ? 0 : from;
+      cancelAnimationFrame(el._raf);
+      if (start === to || matchMedia("(prefers-reduced-motion: reduce)").matches) { el.textContent = to; return; }
+      const t0 = performance.now();
+      const tick = now => {
+        const p = Math.min((now - t0) / duration, 1);
+        el.textContent = Math.round(start + (to - start) * (1 - Math.pow(1 - p, 3)));
+        if (p < 1) el._raf = requestAnimationFrame(tick);
+      };
+      el._raf = requestAnimationFrame(tick);
+    }
+
+    function renderEmployees(event) {
+      const typing = event && event.type === "input";
+      const query = searchInput.value.trim().toLowerCase();
+      const filtered = employees.filter(employee =>
+        [employee.employeeId, employee.name, employee.email, employee.mobile, employee.department]
+          .some(value => String(value ?? "").toLowerCase().includes(query))
+      );
+
+      animateCount(document.getElementById("visibleCount"), filtered.length, typing ? 300 : 700);
+      rows.replaceChildren();
+      if (!filtered.length) {
+        const tr = document.createElement("tr");
+        const td = document.createElement("td");
+        td.colSpan = 5;
+        td.className = "empty";
+        td.textContent = employees.length ? "No matching employees found." : "No employee records found.";
+        tr.appendChild(td);
+        rows.appendChild(tr);
+        return;
+      }
+
+      filtered.forEach((employee, index) => {
+        const tr = document.createElement("tr");
+        if (typing) tr.style.animation = "none"; // instant updates while searching
+        else tr.style.animationDelay = `${Math.min(index * 55, 440)}ms`;
+        [employee.employeeId, employee.name, employee.email, employee.mobile, employee.department]
+          .forEach(value => {
+            const td = document.createElement("td");
+            td.textContent = value ?? "";
+            tr.appendChild(td);
+          });
+        rows.appendChild(tr);
+      });
+    }
+
+    const toast = document.getElementById("toast");
+    let toastTimer;
+    function notify(text, kind) {
+      clearTimeout(toastTimer);
+      toast.textContent = text;
+      toast.className = kind + " visible";
+      toastTimer = setTimeout(() => toast.classList.remove("visible"), 4200);
+    }
+    function progress(active) {
+      const bar = document.getElementById("progress");
+      bar.style.opacity = active ? "1" : "0";
+      bar.style.width = active ? "75%" : "100%";
+      if (!active) setTimeout(() => {bar.style.width="0";}, 400);
+    }
+    function celebrate() {
+      if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      const colors=["#655df0","#25c7bd","#f6bd60","#ed77a5"];
+      for(let i=0;i<26;i++) {
+        const el=document.createElement("span"); el.className="spark";
+        el.style.left="50%";el.style.top="48%";el.style.background=colors[i%4];
+        el.style.setProperty("--dx",`${(Math.random()-.5)*520}px`);
+        el.style.setProperty("--dy",`${(Math.random()-.5)*390}px`);
+        el.style.setProperty("--rot",`${Math.random()*720}deg`);
+        document.body.appendChild(el);el.addEventListener("animationend",()=>el.remove(),{once:true});
+      }
+    }
+    form.addEventListener("submit", async event => {
+      event.preventDefault();
+      showMessage("", "");
+      submitButton.disabled = true;
+      submitButton.setAttribute("aria-busy", "true");
+      submitButton.textContent = "Saving…";
+      progress(true);
+
+      const employee = {
+        name: document.getElementById("name").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        mobile: document.getElementById("mobile").value.trim(),
+        department: document.getElementById("department").value.trim()
+      };
+
+      try {
+        const response = await fetch(`${API_URL}/employees`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(employee)
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.message || `Request failed (${response.status})`);
+        showMessage(result.message || "Employee saved successfully.", "success");
+        form.reset();
+        notify("Employee added successfully", "success");
+        celebrate();
+        await loadEmployees();
+      } catch (error) {
+        notify("Could not save employee. Check API settings.", "error");
+        showMessage(`Could not save employee: ${error.message}. Check API Gateway CORS, Lambda and DynamoDB settings.`, "error");
+      } finally {
+        submitButton.disabled = false;
+        submitButton.removeAttribute("aria-busy");
+        submitButton.textContent = "Save employee";
+        progress(false);
+      }
+    });
+
+    async function loadEmployees() {
+      rows.innerHTML = "<tr><td colspan='5'><div class='loading-shimmer'></div></td></tr>";
+      progress(true);
+      const loadButton = document.getElementById("loadButton");
+      loadButton.disabled = true;
+      loadButton.setAttribute("aria-busy", "true");
+      loadButton.textContent = "Loading…";
+      try {
+        const response = await fetch(`${API_URL}/employees`);
+        const result = await response.json();
+        if (!response.ok) throw new Error(`Request failed (${response.status})`);
+        employees = Array.isArray(result) ? result : [];
+        renderEmployees();
+        animateCount(document.getElementById("totalCount"), employees.length);
+      } catch (error) {
+        employees = [];
+        document.getElementById("totalCount").textContent = "—";
+        rows.innerHTML = `<tr><td class="empty" colspan="5">Unable to load records: ${error.message}. Check API Gateway CORS and Lambda.</td></tr>`;
+      } finally {
+        loadButton.disabled = false;
+        loadButton.removeAttribute("aria-busy");
+        loadButton.textContent = "Refresh";
+        progress(false);
+      }
+    }
+
+    // Navigation: header state on scroll + active section highlight
+    const topbar = document.querySelector(".topbar");
+    addEventListener("scroll", () => topbar.classList.toggle("scrolled", scrollY > 10), { passive: true });
+    const navAnchors = [...document.querySelectorAll(".navlinks a")];
+    const navObserver = new IntersectionObserver(entries => entries.forEach(en => {
+      if (en.isIntersecting) navAnchors.forEach(a => a.classList.toggle("on", a.getAttribute("href") === "#" + en.target.id));
+    }), { rootMargin: "-35% 0px -55% 0px" });
+    navAnchors.forEach(a => { const t = document.querySelector(a.getAttribute("href")); if (t) navObserver.observe(t); });
+
+    document.getElementById("loadButton").addEventListener("click", loadEmployees);
+    searchInput.addEventListener("input", renderEmployees);
+  </script>
+</body>
+</html>

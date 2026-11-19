@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="About us - Discover our vision, mission, values and what makes us unique.">
+    <title>About Us</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --secondary: #7c3aed;
+            --dark: #111827;
+            --light: #f8fafc;
+            --text: #64748b;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--white);
+            color: var(--dark);
+            line-height: 1.7;
+        }
+
+        .hero {
+            min-height: 520px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 80px 20px;
+            background: linear-gradient(135deg, #eff6ff, #f5f3ff, #ffffff);
+        }
+
+        .hero-content {
+            max-width: 850px;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 8px 18px;
+            border-radius: 50px;
+            background: #dbeafe;
+            color: var(--primary);
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 25px;
+        }
+
+        .hero h1 {
+            font-size: clamp(38px, 6vw, 68px);
+            line-height: 1.15;
+            font-weight: 800;
+            margin-bottom: 25px;
+        }
+
+        .gradient {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            color: var(--text);
+            font-size: 18px;
+            max-width: 680px;
+            margin: auto;
+        }
+
+        .section {
+            padding: 90px 8%;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 55px;
+        }
+
+        .section-header h2 {
+            font-size: 38px;
+            margin-bottom: 15px;
+        }
+
+        .section-header p {
+            color: var(--text);
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            max-width: 1150px;
+            margin: auto;
+        }
+
+        .about-image {
+            min-height: 380px;
+            border-radius: 25px;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 100px;
+            box-shadow: 0 25px 60px rgba(37, 99, 235, 0.2);
+        }
+
+        .about-content h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        .about-content p {
+            color: var(--text);
+            margin-bottom: 18px;
+        }
+
+        .features {
+            background: var(--light);
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            max-width: 1150px;
+            margin: auto;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 35px;
+            border-radius: 20px;
+            border: 1px solid #e2e8f0;
+            transition: 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 45px rgba(15, 23, 42, 0.08);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #eff6ff;
+            color: var(--primary);
+            font-size: 28px;
+            border-radius: 15px;
+            margin-bottom: 22px;
+        }
+
+        .feature-card h3 {
+            font-size: 20px;
+            margin-bottom: 12px;
+        }
+
+        .feature-card p {
+            color: var(--text);
+            font-size: 14px;
+        }
+
+        .stats {
+            max-width: 1100px;
+            margin: auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            text-align: center;
+        }
+
+        .stat-item h2 {
+            font-size: 42px;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .stat-item p {
+            color: var(--text);
+            font-size: 14px;
+        }
+
+        .cta {
+            padding: 80px 20px;
+            text-align: center;
+            background: linear-gradient(135deg, #1d4ed8, #6d28d9);
+            color: white;
+        }
+
+        .cta h2 {
+            font-size: 38px;
+            margin-bottom: 15px;
+        }
+
+        .cta p {
+            color: #e0e7ff;
+            margin-bottom: 30px;
+        }
+
+        .cta a {
+            display: inline-block;
+            padding: 14px 30px;
+            background: white;
+            color: var(--primary);
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 700;
+            transition: 0.3s;
+        }
+
+        .cta a:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: var(--text);
+            background: #f8fafc;
+            font-size: 13px;
+        }
+
+        @media (max-width: 850px) {
+            .about-grid {
+                grid-template-columns: 1fr;
+                gap: 35px;
+            }
+
+            .feature-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+                row-gap: 35px;
+            }
+        }
+
+        @media (max-width: 550px) {
+            .section {
+                padding: 65px 6%;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero p {
+                font-size: 16px;
+            }
+
+            .about-image {
+                min-height: 260px;
+            }
+
+            .section-header h2,
+            .about-content h2,
+            .cta h2 {
+                font-size: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="hero">
+        <div class="hero-content">
+            <span class="tag">ABOUT US</span>
+            <h1>Building Ideas Into <span class="gradient">Meaningful Experiences</span></h1>
+            <p>We believe in innovation, creativity and continuous improvement. Our goal is to create meaningful solutions that make a difference.</p>
+        </div>
+    </header>
+
+    <section class="section">
+        <div class="about-grid">
+            <div class="about-image">✦</div>
+            <div class="about-content">
+                <span class="tag">WHO WE ARE</span>
+                <h2>Driven By Purpose, Inspired By Innovation</h2>
+                <p>We are passionate about exploring new possibilities, solving challenges and transforming creative ideas into practical solutions.</p>
+                <p>Our approach combines creativity, technology and thoughtful execution to deliver experiences that are simple, effective and impactful.</p>
+                <p>We continuously learn, evolve and embrace opportunities to build something better.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section features">
+        <div class="section-header">
+            <span class="tag">WHAT DEFINES US</span>
+            <h2>Our Core Values</h2>
+            <p>The principles that guide our vision, decisions and everyday work.</p>
+        </div>
+
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">💡</div>
+                <h3>Innovation</h3>
+                <p>We embrace fresh ideas and creative thinking to discover better ways of doing things.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>Excellence</h3>
+                <p>We focus on quality, consistency and delivering meaningful results in everything we do.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🤝</div>
+                <h3>Collaboration</h3>
+                <p>We believe teamwork, communication and shared knowledge create stronger outcomes.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🔍</div>
+                <h3>Transparency</h3>
+                <p>We value honesty, openness and clear communication throughout every process.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🚀</div>
+                <h3>Growth</h3>
+                <p>We continuously improve our knowledge, skills and approach to meet new challenges.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🌍</div>
+                <h3>Impact</h3>
+                <p>We aim to create solutions that provide lasting value and positive experiences.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <span class="tag">OUR APPROACH</span>
+            <h2>How We Create Value</h2>
+            <p>A thoughtful approach that transforms ideas into meaningful outcomes.</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <h2>01</h2>
+                <p>Discover</p>
+            </div>
+            <div class="stat-item">
+                <h2>02</h2>
+                <p>Plan</p>
+            </div>
+            <div class="stat-item">
+                <h2>03</h2>
+                <p>Create</p>
+            </div>
+            <div class="stat-item">
+                <h2>04</h2>
+                <p>Improve</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta">
+        <h2>Let's Create Something Great</h2>
+        <p>Every great achievement begins with an idea. Let's turn possibilities into reality.</p>
+        <a href="contact.html">Get In Touch</a>
+    </section>
+
+    <footer>
+        <p>© 2026 All Rights Reserved.</p>
+    </footer>
+
+</body>
+</html>
